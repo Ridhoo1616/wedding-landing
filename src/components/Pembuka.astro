@@ -1,8 +1,8 @@
 ---
 import { Image } from 'astro:assets';
-import { foto, mempelai, tanggalUtama } from '../data/undangan';
+import { bersamaSejak, foto, pasangan, slot } from '../data/halaman';
 
-const tgl = new Date(tanggalUtama);
+const tgl = new Date(bersamaSejak);
 const bagian = (opsi: Intl.DateTimeFormatOptions) =>
   tgl.toLocaleDateString('id-ID', { ...opsi, timeZone: 'Asia/Jakarta' });
 ---
@@ -13,14 +13,14 @@ const bagian = (opsi: Intl.DateTimeFormatOptions) =>
   </div>
 
   <div class="pembuka-teks">
-    <p class="label muncul">Kami akan menikah</p>
+    <p class="label muncul">Cerita kami</p>
     <h2 class="pembuka-nama">
-      <span class="skrip muncul" style="--tunda:.1s">{mempelai.wanita.panggilan}</span>
+      <span class="skrip muncul" style="--tunda:.1s">{pasangan.pria.panggilan}</span>
       <span class="dan muncul" style="--tunda:.25s">&amp;</span>
-      <span class="skrip muncul" style="--tunda:.4s">{mempelai.pria.panggilan}</span>
+      <span class="skrip muncul" style="--tunda:.4s">{pasangan.wanita.panggilan}</span>
     </h2>
     <div class="pembuka-tanggal muncul" style="--tunda:.55s">
-      <span>{bagian({ weekday: 'long' })}</span>
+      <span>Sejak</span>
       <strong>{bagian({ day: '2-digit' })}</strong>
       <span>{bagian({ month: 'long' })} {bagian({ year: 'numeric' })}</span>
     </div>
@@ -31,6 +31,7 @@ const bagian = (opsi: Intl.DateTimeFormatOptions) =>
       <Image
         src={foto.sampul.src}
         alt={foto.sampul.alt}
+        data-slot={slot(foto.sampul.src)}
         widths={[480, 683]}
         sizes="(max-width: 760px) 80vw, 420px"
         loading="eager"

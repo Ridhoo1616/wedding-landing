@@ -17,6 +17,5 @@ Semua foto contoh berlisensi **CC0 (domain publik)** dari rawpixel, didapat lewa
 | `buket-lili.webp` | Free bride white lily bouquet | https://www.rawpixel.com/image/5921146/photo-image-flower-public-domain-hand |
 | `anggrek.webp` | Free flower bouquet | https://www.rawpixel.com/image/5925534/free-flower-bouquet-public-domain-cc0 |
 | `buket-taman.webp` | Free bride holding flower bouquet | https://www.rawpixel.com/image/5924561/photo-image-aesthetic-flower-public-domain |
-| `dekorasi-meja.webp` | Free flower bouquet image | https://www.rawpixel.com/image/5908022/image-flower-public-domain-wedding |
 | `punggung.webp` | Groom wraps arm bride's back | https://www.rawpixel.com/image/3283244/free-photo-image-wedding-hair-accessory |
 | `buket-mawar.webp` | Free wedding bouquet image | https://www.rawpixel.com/image/5919953/photo-image-flower-public-domain-green |

@@ -3,35 +3,33 @@ import Dasar from '../layouts/Dasar.astro';
 import Sampul from '../components/Sampul.astro';
 import Pembuka from '../components/Pembuka.astro';
 import Kutipan from '../components/Kutipan.astro';
-import Mempelai from '../components/Mempelai.astro';
-import HitungMundur from '../components/HitungMundur.astro';
+import Tentang from '../components/Tentang.astro';
+import Bersama from '../components/Bersama.astro';
 import Sorotan from '../components/Sorotan.astro';
-import Acara from '../components/Acara.astro';
 import Galeri from '../components/Galeri.astro';
-import Ucapan from '../components/Ucapan.astro';
-import Hadiah from '../components/Hadiah.astro';
+import Pesan from '../components/Pesan.astro';
 import Penutup from '../components/Penutup.astro';
 import Navigasi from '../components/Navigasi.astro';
-import { mempelai } from '../data/undangan';
+import AturFoto from '../components/AturFoto.astro';
+import { pasangan } from '../data/halaman';
 
-const pasangan = `${mempelai.wanita.panggilan} & ${mempelai.pria.panggilan}`;
+const nama = `${pasangan.pria.panggilan} & ${pasangan.wanita.panggilan}`;
 ---
 
-<Dasar judul={`Pernikahan ${pasangan}`} deskripsi={`Undangan pernikahan ${pasangan}. Mohon doa restu dan kehadiran Anda.`}>
+<Dasar judul={nama} deskripsi={`Cerita kecil ${nama}.`}>
   <Sampul />
   <main>
     <Pembuka />
     <Kutipan />
-    <Mempelai />
-    <HitungMundur />
+    <Tentang />
+    <Bersama />
     <Sorotan />
-    <Acara />
     <Galeri />
-    <Ucapan />
-    <Hadiah />
+    <Pesan />
   </main>
   <Penutup />
   <Navigasi />
+  <AturFoto />
 </Dasar>
 
 <script>

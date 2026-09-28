@@ -1,23 +1,23 @@
 ---
 import { Image } from 'astro:assets';
-import { foto, mempelai } from '../data/undangan';
+import { foto, pasangan, slot } from '../data/halaman';
 ---
 
 <footer class="penutup">
   <div class="foto" data-paralaks="0.1">
-    <Image src={foto.penutup.src} alt={foto.penutup.alt} widths={[1024]} sizes="100vw" style={`object-position:${foto.penutup.fokus}`} />
+    <Image src={foto.penutup.src} alt={foto.penutup.alt} data-slot={slot(foto.penutup.src)} widths={[1024]} sizes="100vw" style={`object-position:${foto.penutup.fokus}`} />
   </div>
   <div class="isi">
     <p class="muncul">
-      Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i
-      berkenan hadir dan memberikan doa restu.
+      Terima kasih sudah mampir dan ikut membaca cerita kecil kami.
+      Semoga harimu juga menyenangkan.
     </p>
-    <p class="label muncul" style="--tunda:.1s">Kami yang berbahagia</p>
+    <p class="label muncul" style="--tunda:.1s">Salam hangat</p>
     <p class="nama skrip muncul" style="--tunda:.2s">
-      {mempelai.wanita.panggilan} <span>&amp;</span> {mempelai.pria.panggilan}
+      {pasangan.pria.panggilan} <span>&amp;</span> {pasangan.wanita.panggilan}
     </p>
   </div>
-  <p class="kredit">Foto contoh: rawpixel (CC0) · Dibuat dengan Astro</p>
+  <p class="kredit">Dibuat dengan Astro</p>
 </footer>
 
 <style>

@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import { sorotan } from '../data/undangan';
+import { slot, sorotan } from '../data/halaman';
 ---
 
 <!--
@@ -12,7 +12,7 @@ import { sorotan } from '../data/undangan';
     <div class="kepala wadah">
       <div>
         <p class="label">Detail kecil</p>
-        <h2 class="judul">Hal-hal yang <em>ia</em> cintai</h2>
+        <h2 class="judul">Momen-momen <em>kecil</em></h2>
       </div>
       <p class="petunjuk"><span class="panah">→</span> Geser untuk menjelajah</p>
     </div>
@@ -25,6 +25,7 @@ import { sorotan } from '../data/undangan';
               <Image
                 src={f.src}
                 alt={f.alt}
+                data-slot={slot(f.src)}
                 widths={[420, 683]}
                 sizes="(max-width: 760px) 72vw, 380px"
                 style={f.fokus ? `object-position:${f.fokus}` : undefined}

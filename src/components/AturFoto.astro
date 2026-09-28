@@ -1,0 +1,361 @@
+---
+import { labelSlot } from '../data/halaman';
+
+const daftar = Object.entries(labelSlot);
+---
+
+<!--
+  Panel untuk mengganti foto langsung dari halaman. Tombolnya hanya muncul bila
+  alamat diberi ?atur, mis. https://.../wedding-landing/?atur
+-->
+<button type="button" class="pemicu" hidden aria-haspopup="dialog">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+    <circle cx="9" cy="10" r="1.8"></circle>
+    <path d="m21 16-5-5-9 8"></path>
+  </svg>
+  Atur foto
+</button>
+
+<dialog class="panel" aria-labelledby="judul-atur">
+  <header>
+    <div>
+      <h2 id="judul-atur">Atur foto</h2>
+      <p>
+        Foto tersimpan di peramban ini saja dan tidak diunggah ke mana pun. Pengunjung lain tetap melihat foto bawaan.
+      </p>
+    </div>
+    <button type="button" class="tutup" aria-label="Tutup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+    </button>
+  </header>
+
+  <div class="aksi">
+    <label class="tombol isi">
+      <input type="file" accept="image/*" multiple data-banyak hidden />
+      Pilih banyak sekaligus
+    </label>
+    <button type="button" class="tombol" data-kosongkan>Kembalikan semua</button>
+  </div>
+  <p class="catatan">
+    "Pilih banyak sekaligus" mengisi slot berurutan dari atas: foto pertama ke sampul, dan seterusnya.
+  </p>
+  <p class="status" role="status"></p>
+
+  <ul class="slot-slot" role="list">
+    {
+      daftar.map(([slot, label], i) => (
+        <li data-baris={slot}>
+          <img class="mini" alt="" />
+          <div class="info">
+            <span class="no">{String(i + 1).padStart(2, '0')}</span>
+            <span class="nama">{label}</span>
+            <span class="tanda">Foto sendiri</span>
+          </div>
+          <label class="kecil">
+            <input type="file" accept="image/*" data-ganti={slot} hidden />
+            Ganti
+          </label>
+          <button type="button" class="kecil" data-hapus={slot}>
+            Bawaan
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+</dialog>
+
+<style>
+  .pemicu {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid var(--garis);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.9);
+    box-shadow: 0 10px 30px -15px rgb(60 45 25 / 0.4);
+    backdrop-filter: blur(10px);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+  }
+
+  .pemicu[hidden] {
+    display: none;
+  }
+
+  .pemicu svg,
+  .tombol svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .panel {
+    width: min(100% - 24px, 560px);
+    max-height: min(100dvh - 24px, 860px);
+    padding: 0;
+    border: 1px solid var(--garis);
+    border-radius: 14px;
+    background: var(--putih);
+    color: var(--tinta);
+    box-shadow: 0 40px 80px -30px rgb(60 45 25 / 0.45);
+  }
+
+  .panel::backdrop {
+    background: rgb(44 39 34 / 0.35);
+    backdrop-filter: blur(2px);
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 22px 22px 14px;
+    background: var(--putih);
+    border-bottom: 1px solid var(--garis);
+  }
+
+  h2 {
+    margin: 0 0 4px;
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 28px;
+  }
+
+  header p,
+  .catatan {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--redup);
+  }
+
+  .tutup {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--garis);
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .tutup svg {
+    width: 18px;
+  }
+
+  .aksi {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 18px 22px 8px;
+  }
+
+  .aksi .tombol {
+    padding: 11px 20px;
+    font-size: 12px;
+  }
+
+  .catatan {
+    padding: 0 22px;
+  }
+
+  .status {
+    min-height: 1.5em;
+    margin: 8px 22px 0;
+    font-size: 13px;
+    color: var(--emas);
+  }
+
+  .slot-slot {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 6px 12px 16px;
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 52px 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: 8px;
+  }
+
+  li:hover {
+    background: var(--kertas);
+  }
+
+  .mini {
+    width: 52px;
+    height: 52px;
+    border-radius: 6px;
+    object-fit: cover;
+    background: var(--kertas);
+  }
+
+  .info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 10px;
+    min-width: 0;
+  }
+
+  .no {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--emas);
+  }
+
+  .nama {
+    font-size: 14px;
+  }
+
+  .tanda {
+    display: none;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--tinta);
+    color: var(--putih);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  li.sendiri .tanda {
+    display: inline-block;
+  }
+
+  .kecil {
+    padding: 7px 14px;
+    border: 1px solid var(--garis);
+    border-radius: 999px;
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .kecil:hover {
+    border-color: var(--tinta);
+  }
+
+  li:not(.sendiri) [data-hapus] {
+    visibility: hidden;
+  }
+
+  label.kecil:focus-within,
+  label.tombol:focus-within {
+    outline: 2px solid var(--emas);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 480px) {
+    li {
+      grid-template-columns: 44px 1fr auto auto;
+      gap: 8px;
+      padding-inline: 6px;
+    }
+
+    .mini {
+      width: 44px;
+      height: 44px;
+    }
+
+    .kecil {
+      padding: 6px 11px;
+    }
+
+    li:not(.sendiri) [data-hapus] {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { hapus, kosongkan, perkecil, simpan, terapkan, terapkanSemua } from '../scripts/foto-lokal';
+
+  const pemicu = document.querySelector<HTMLButtonElement>('.pemicu')!;
+  const panel = document.querySelector<HTMLDialogElement>('.panel')!;
+  const status = panel.querySelector<HTMLElement>('.status')!;
+  const baris = [...panel.querySelectorAll<HTMLLIElement>('[data-baris]')];
+
+  // Mini-pratinjau mengikuti foto yang sedang tampil di halaman.
+  const segarkan = () => {
+    for (const li of baris) {
+      const img = document.querySelector<HTMLImageElement>(`img[data-slot="${li.dataset.baris}"]`);
+      const mini = li.querySelector<HTMLImageElement>('.mini')!;
+      // Pakai src, bukan currentSrc: currentSrc masih menunjuk foto lama sampai foto baru selesai dimuat.
+      if (img) mini.src = img.src;
+      li.classList.toggle('sendiri', !!img?.src.startsWith('blob:'));
+    }
+  };
+
+  const pasang = async (slot: string, berkas: File) => {
+    const b = await perkecil(berkas);
+    await simpan(slot, b);
+    terapkan(slot, b);
+  };
+
+  const kabari = (teks: string) => {
+    status.textContent = teks;
+    setTimeout(() => status.textContent === teks && (status.textContent = ''), 3000);
+  };
+
+  terapkanSemua();
+
+  if (new URLSearchParams(location.search).has('atur')) pemicu.hidden = false;
+
+  pemicu.addEventListener('click', () => {
+    segarkan();
+    panel.showModal();
+  });
+  panel.querySelector('.tutup')!.addEventListener('click', () => panel.close());
+  panel.addEventListener('click', (e) => e.target === panel && panel.close());
+
+  panel.addEventListener('change', async (e) => {
+    const input = e.target as HTMLInputElement;
+    const berkas = [...(input.files ?? [])];
+    if (!berkas.length) return;
+    try {
+      if (input.dataset.ganti) {
+        await pasang(input.dataset.ganti, berkas[0]);
+        kabari('Foto diganti.');
+      } else if ('banyak' in input.dataset) {
+        const n = Math.min(berkas.length, baris.length);
+        for (let i = 0; i < n; i++) await pasang(baris[i].dataset.baris!, berkas[i]);
+        kabari(`${n} foto dipasang.`);
+      }
+    } catch {
+      kabari('Ada foto yang tidak bisa dibaca. Coba format JPG atau PNG.');
+    }
+    input.value = '';
+    segarkan();
+  });
+
+  panel.addEventListener('click', async (e) => {
+    const t = (e.target as HTMLElement).closest<HTMLElement>('[data-hapus], [data-kosongkan]');
+    if (!t) return;
+    if (t.dataset.hapus) {
+      await hapus(t.dataset.hapus);
+      terapkan(t.dataset.hapus, null);
+    } else {
+      await kosongkan();
+      baris.forEach((li) => terapkan(li.dataset.baris!, null));
+      kabari('Semua foto kembali ke bawaan.');
+    }
+    segarkan();
+  });
+</script>

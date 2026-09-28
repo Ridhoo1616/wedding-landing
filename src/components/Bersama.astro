@@ -1,0 +1,102 @@
+---
+import { bersamaSejak } from '../data/halaman';
+
+const sejak = new Date(bersamaSejak).toLocaleDateString('id-ID', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'Asia/Jakarta',
+});
+
+const satuan = [
+  ['hari', 'Hari'],
+  ['jam', 'Jam'],
+  ['menit', 'Menit'],
+  ['detik', 'Detik'],
+];
+---
+
+<section class="mundur" id="bersama" data-sejak={bersamaSejak}>
+  <div class="wadah">
+    <p class="label muncul">Sudah bersama</p>
+    <div class="angka" role="timer" aria-live="off">
+      {
+        satuan.map(([kunci, label], i) => (
+          <div class="kotak muncul" style={`--tunda:${i * 0.08}s`}>
+            <span class="nilai" data-satuan={kunci}>00</span>
+            <span class="nama">{label}</span>
+          </div>
+        ))
+      }
+    </div>
+    <p class="sejak muncul">sejak {sejak}, dan masih terus bertambah</p>
+  </div>
+</section>
+
+<style>
+  .mundur {
+    padding-block: clamp(70px, 10vw, 120px);
+    text-align: center;
+    border-block: 1px solid var(--garis);
+  }
+
+  .angka {
+    display: flex;
+    justify-content: center;
+    gap: clamp(10px, 3vw, 40px);
+    margin: 8px 0 32px;
+  }
+
+  .kotak {
+    display: grid;
+    gap: 6px;
+    min-width: clamp(68px, 14vw, 130px);
+    padding-block: 12px;
+  }
+
+  .kotak + .kotak {
+    border-left: 1px solid var(--garis);
+  }
+
+  .nilai {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(44px, 8vw, 96px);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nama {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--redup);
+  }
+
+  .sejak {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-style: italic;
+    color: var(--redup);
+  }
+</style>
+
+<script>
+  const bagian = document.getElementById('bersama')!;
+  const mulai = new Date(bagian.dataset.sejak!).getTime();
+  const sel = Object.fromEntries(
+    [...bagian.querySelectorAll<HTMLElement>('[data-satuan]')].map((el) => [el.dataset.satuan!, el]),
+  );
+  const dua = (n: number) => String(n).padStart(2, '0');
+
+  const perbarui = () => {
+    const detik = Math.floor(Math.max(0, Date.now() - mulai) / 1000);
+    sel.hari.textContent = String(Math.floor(detik / 86400));
+    sel.jam.textContent = dua(Math.floor((detik % 86400) / 3600));
+    sel.menit.textContent = dua(Math.floor((detik % 3600) / 60));
+    sel.detik.textContent = dua(detik % 60);
+  };
+  setInterval(perbarui, 1000);
+  perbarui();
+</script>

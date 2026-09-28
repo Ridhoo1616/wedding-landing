@@ -1,14 +1,13 @@
 ---
 const menu = [
   ['#beranda', 'Beranda', 'M4 11 12 4l8 7v9h-5v-6H9v6H4v-9Z'],
-  ['#mempelai', 'Mempelai', 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z'],
-  ['#acara', 'Acara', 'M4 6h16v14H4zM4 10h16M9 3v4M15 3v4'],
+  ['#tentang', 'Tentang', 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z'],
   ['#galeri', 'Galeri', 'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4'],
-  ['#ucapan', 'Ucapan', 'M5 5h14v10H9l-4 4V5Z'],
+  ['#pesan', 'Pesan', 'M5 5h14v10H9l-4 4V5Z'],
 ];
 ---
 
-<nav class="navigasi" aria-label="Bagian undangan">
+<nav class="navigasi" aria-label="Bagian halaman">
   {
     menu.map(([href, label, d]) => (
       <a href={href} data-ke={href.slice(1)}>

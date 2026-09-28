@@ -1,6 +1,6 @@
 ---
 import { Image, getImage } from 'astro:assets';
-import { galeri } from '../data/undangan';
+import { galeri, slot } from '../data/halaman';
 
 // Versi besar untuk penampil layar penuh, dibuat saat build.
 const besar = await Promise.all(galeri.map((f) => getImage({ src: f.src, width: 1024, format: 'webp' })));
@@ -10,7 +10,7 @@ const besar = await Promise.all(galeri.map((f) => getImage({ src: f.src, width: 
   <div class="wadah">
     <div class="kepala">
       <p class="label muncul">Galeri</p>
-      <h2 class="judul muncul" style="--tunda:.1s">Potret <em>bahagia</em></h2>
+      <h2 class="judul muncul" style="--tunda:.1s">Potret <em>favorit</em></h2>
       <p class="sub muncul" style="--tunda:.2s">Sentuh foto untuk melihat lebih dekat</p>
     </div>
 
@@ -23,6 +23,7 @@ const besar = await Promise.all(galeri.map((f) => getImage({ src: f.src, width: 
               class="sel-tombol tirai"
               style={`--tunda:${(i % 3) * 0.12}s`}
               data-indeks={i}
+              data-slot={slot(f.src)}
               data-besar={besar[i].src}
               data-alt={f.alt}
               aria-label={`Perbesar foto: ${f.alt}`}
@@ -30,6 +31,7 @@ const besar = await Promise.all(galeri.map((f) => getImage({ src: f.src, width: 
               <Image
                 src={f.src}
                 alt={f.alt}
+                data-slot={slot(f.src)}
                 widths={[360, 640]}
                 sizes="(max-width: 760px) 50vw, 380px"
                 style={f.fokus ? `object-position:${f.fokus}` : undefined}

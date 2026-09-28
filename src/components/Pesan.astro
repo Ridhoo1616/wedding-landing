@@ -1,0 +1,183 @@
+---
+import { pasangan, whatsapp } from '../data/halaman';
+---
+
+<!--
+  Situs statis tidak punya server, jadi pesan dikirim lewat WhatsApp ke nomor
+  di data/halaman.ts. Pesan juga disimpan di peramban pengunjung agar tampil kembali.
+-->
+<section class="ucapan bagian" id="pesan">
+  <div class="wadah sempit">
+    <div class="kepala">
+      <p class="label muncul">Buku tamu</p>
+      <h2 class="judul muncul" style="--tunda:.1s">Tinggalkan <em>pesan</em></h2>
+      <p class="sub muncul" style="--tunda:.2s">Tulis apa saja untuk kami berdua. Pesannya langsung terkirim lewat WhatsApp.</p>
+    </div>
+
+    <form class="formulir muncul" data-wa={whatsapp} data-pasangan={`${pasangan.pria.panggilan} & ${pasangan.wanita.panggilan}`}>
+      <label class="isian">
+        <span>Nama</span>
+        <input name="nama" required maxlength="60" autocomplete="name" placeholder="Nama kamu" />
+      </label>
+
+      <label class="isian">
+        <span>Pesan</span>
+        <textarea name="pesan" rows="4" maxlength="400" required placeholder="Tulis pesan untuk kami"></textarea>
+      </label>
+
+      <button class="tombol isi" type="submit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7Z" />
+        </svg>
+        Kirim lewat WhatsApp
+      </button>
+    </form>
+
+    <ol class="daftar-ucapan" aria-live="polite"></ol>
+  </div>
+</section>
+
+<style>
+  .sempit {
+    max-width: 680px;
+  }
+
+  .kepala {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .sub {
+    color: var(--redup);
+    margin: 14px 0 0;
+  }
+
+  .formulir {
+    display: grid;
+    gap: 22px;
+    padding: clamp(24px, 5vw, 48px);
+    background: #fff;
+    border: 1px solid var(--garis);
+    border-radius: 6px;
+  }
+
+  .isian {
+    display: grid;
+    gap: 8px;
+  }
+
+  .isian > span {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--redup);
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 12px 0;
+    border: 0;
+    border-bottom: 1px solid var(--garis);
+    border-radius: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 16px;
+    color: var(--tinta);
+    transition: border-color 0.3s;
+    resize: vertical;
+  }
+
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-bottom-color: var(--emas);
+  }
+
+  .formulir .tombol {
+    justify-self: start;
+  }
+
+  .daftar-ucapan {
+    display: grid;
+    gap: 14px;
+    margin: 32px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .daftar-ucapan :global(li) {
+    padding: 20px 24px;
+    border-left: 2px solid var(--emas-muda);
+    background: var(--kertas);
+    animation: masuk 0.7s var(--mulus);
+  }
+
+  .daftar-ucapan :global(strong) {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .daftar-ucapan :global(p) {
+    margin: 6px 0 0;
+    color: var(--redup);
+  }
+
+  @keyframes masuk {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+</style>
+
+<script>
+  interface Pesan {
+    nama: string;
+    pesan: string;
+  }
+
+  const form = document.querySelector<HTMLFormElement>('.formulir')!;
+  const daftar = document.querySelector<HTMLOListElement>('.daftar-ucapan')!;
+  const KUNCI = 'halaman-pesan';
+
+  const baca = (): Pesan[] => {
+    try {
+      return JSON.parse(localStorage.getItem(KUNCI) || '[]');
+    } catch {
+      return [];
+    }
+  };
+
+  const tambahkan = (u: Pesan) => {
+    const li = document.createElement('li');
+    const nama = document.createElement('strong');
+    nama.textContent = u.nama;
+    const p = document.createElement('p');
+    p.textContent = u.pesan;
+    li.append(nama, p);
+    daftar.prepend(li);
+  };
+
+  baca().forEach(tambahkan);
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const d = new FormData(form);
+    const u: Pesan = {
+      nama: String(d.get('nama')).trim(),
+      pesan: String(d.get('pesan')).trim(),
+    };
+    const teks = `Halo ${form.dataset.pasangan}, dari *${u.nama}*:\n${u.pesan}`;
+    window.open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(teks)}`, '_blank', 'noopener');
+
+    tambahkan(u);
+    try {
+      localStorage.setItem(KUNCI, JSON.stringify([...baca(), u].slice(-20)));
+    } catch {
+      // Penyimpanan diblokir (mis. mode privat); pesan tetap tampil di halaman ini.
+    }
+    form.reset();
+  });
+</script>
