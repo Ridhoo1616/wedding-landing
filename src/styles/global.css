@@ -1,0 +1,215 @@
+@import '@fontsource/cormorant-garamond/300.css';
+@import '@fontsource/cormorant-garamond/400.css';
+@import '@fontsource/cormorant-garamond/400-italic.css';
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/pinyon-script/400.css';
+@import '@fontsource-variable/jost';
+
+:root {
+  --putih: #fdfbf7;
+  --kertas: #f6f1ea;
+  --garis: #e7dfd4;
+  --tinta: #2c2722;
+  --redup: #7d746a;
+  --emas: #a88a5c;
+  --emas-muda: #d9c7a7;
+
+  --serif: 'Cormorant Garamond', 'Times New Roman', serif;
+  --skrip: 'Pinyon Script', cursive;
+  --sans: 'Jost Variable', system-ui, sans-serif;
+
+  --lebar: 1180px;
+  --tepi: clamp(16px, 5vw, 48px);
+  --lengkung: 999px 999px 0 0;
+  --mulus: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--putih);
+  color: var(--tinta);
+  font-family: var(--sans);
+  font-weight: 350;
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+body.terkunci {
+  overflow: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--emas);
+  outline-offset: 3px;
+}
+
+.wadah {
+  width: min(100% - 2 * var(--tepi), var(--lebar));
+  margin-inline: auto;
+}
+
+.bagian {
+  padding-block: clamp(80px, 12vw, 150px);
+}
+
+.label {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 450;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--emas);
+  margin: 0 0 18px;
+}
+
+.judul {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(40px, 6vw, 72px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.judul em {
+  font-style: italic;
+  color: var(--emas);
+}
+
+.skrip {
+  font-family: var(--skrip);
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.tombol {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border: 1px solid var(--tinta);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.4s var(--mulus), color 0.4s var(--mulus), border-color 0.4s var(--mulus);
+}
+
+.tombol:hover {
+  background: var(--tinta);
+  color: var(--putih);
+}
+
+.tombol.isi {
+  background: var(--tinta);
+  color: var(--putih);
+}
+
+.tombol.isi:hover {
+  background: var(--emas);
+  border-color: var(--emas);
+}
+
+.tombol svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+/* Muncul saat masuk layar; kelas .tampak ditambahkan oleh scripts/gerak.ts. */
+.muncul {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 1.1s var(--mulus), transform 1.1s var(--mulus);
+  transition-delay: var(--tunda, 0s);
+}
+
+.muncul.tampak {
+  opacity: 1;
+  transform: none;
+}
+
+/* Foto dibuka dari bawah ke atas seperti tirai. */
+.tirai {
+  overflow: hidden;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1.4s var(--mulus);
+  transition-delay: var(--tunda, 0s);
+}
+
+.tirai img {
+  transform: scale(1.18);
+  transition: transform 2.2s var(--mulus);
+  transition-delay: var(--tunda, 0s);
+}
+
+.tirai.tampak {
+  clip-path: inset(0 0 0 0);
+}
+
+.tirai.tampak img {
+  transform: scale(1);
+}
+
+.hiasan {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: var(--emas);
+}
+
+.hiasan::before,
+.hiasan::after {
+  content: '';
+  width: 56px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .muncul,
+  .tirai,
+  .tirai img {
+    transition: none;
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+}

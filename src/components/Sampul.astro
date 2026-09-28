@@ -1,0 +1,199 @@
+---
+import { Image } from 'astro:assets';
+import { foto, mempelai, tanggalUtama } from '../data/undangan';
+
+const tanggal = new Date(tanggalUtama).toLocaleDateString('id-ID', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'Asia/Jakarta',
+});
+---
+
+<div class="sampul" id="sampul" role="dialog" aria-modal="true" aria-labelledby="sampul-nama">
+  <div class="sampul-foto">
+    <Image
+      src={foto.sampul.src}
+      alt={foto.sampul.alt}
+      widths={[480, 683]}
+      sizes="(max-width: 760px) 70vw, 340px"
+      loading="eager"
+      fetchpriority="high"
+      style={`object-position:${foto.sampul.fokus}`}
+    />
+  </div>
+  <div class="sampul-isi">
+    <p class="label">Undangan Pernikahan</p>
+    <h1 id="sampul-nama" class="sampul-nama skrip">
+      {mempelai.wanita.panggilan} <span>&amp;</span> {mempelai.pria.panggilan}
+    </h1>
+    <p class="sampul-tanggal">{tanggal}</p>
+    <div class="sampul-tamu">
+      <span>Kepada Yth. Bapak/Ibu/Saudara/i</span>
+      <strong id="nama-tamu">Tamu Undangan</strong>
+    </div>
+    <button class="tombol isi" id="buka-undangan" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <rect x="3" y="5" width="18" height="14" rx="1.5"></rect>
+        <path d="m3.5 6 8.5 7 8.5-7"></path>
+      </svg>
+      Buka Undangan
+    </button>
+  </div>
+</div>
+<noscript><style>.sampul{display:none}</style></noscript>
+<script is:inline>
+  document.body.classList.add('terkunci');
+</script>
+
+<style>
+  .sampul {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(32px, 6vw, 96px);
+    padding: var(--tepi);
+    background:
+      radial-gradient(ellipse at 20% 10%, #fff 0%, transparent 60%),
+      var(--putih);
+    transition: transform 1.3s var(--mulus), opacity 1.3s var(--mulus);
+  }
+
+  .sampul.terbuka {
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
+
+  .sampul-foto {
+    width: clamp(220px, 26vw, 340px);
+    aspect-ratio: 3 / 4.4;
+    border-radius: var(--lengkung);
+    overflow: hidden;
+    box-shadow: 0 30px 60px -30px rgb(60 45 25 / 0.35);
+    animation: timbul 1.6s var(--mulus) both;
+  }
+
+  .sampul-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: napas 14s ease-in-out infinite alternate;
+  }
+
+  .sampul-isi {
+    text-align: center;
+    max-width: 420px;
+    animation: timbul 1.6s 0.25s var(--mulus) both;
+  }
+
+  .sampul-nama {
+    font-size: clamp(56px, 7vw, 92px);
+    margin: 0;
+    color: var(--tinta);
+  }
+
+  .sampul-nama span {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--emas);
+    font-size: 0.5em;
+  }
+
+  .sampul-tanggal {
+    font-family: var(--serif);
+    font-size: 20px;
+    letter-spacing: 0.12em;
+    color: var(--redup);
+    margin: 8px 0 36px;
+  }
+
+  .sampul-tamu {
+    display: grid;
+    gap: 4px;
+    padding: 18px 24px;
+    margin-bottom: 32px;
+    border-block: 1px solid var(--garis);
+    font-size: 13px;
+    color: var(--redup);
+  }
+
+  .sampul-tamu strong {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--tinta);
+  }
+
+  @keyframes timbul {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+  }
+
+  @keyframes napas {
+    to {
+      transform: scale(1.08);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .sampul {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      align-content: center;
+      gap: 24px;
+      overflow-y: auto;
+    }
+
+    .sampul-foto {
+      width: min(52vw, 220px);
+    }
+
+    .sampul-tanggal {
+      margin-bottom: 20px;
+    }
+
+    .sampul-tamu {
+      margin-bottom: 20px;
+    }
+  }
+
+  @media (max-height: 640px) and (max-width: 760px) {
+    .sampul-foto {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sampul-foto,
+    .sampul-isi,
+    .sampul-foto img {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const sampul = document.getElementById('sampul')!;
+  const tombol = document.getElementById('buka-undangan')!;
+
+  // Nama tamu dari tautan, mis. ...?to=Budi+Santoso
+  const tamu = new URLSearchParams(location.search).get('to');
+  if (tamu) document.getElementById('nama-tamu')!.textContent = tamu.slice(0, 60);
+
+  tombol.focus({ preventScroll: true });
+  tombol.addEventListener('click', () => {
+    sampul.classList.add('terbuka');
+    sampul.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('terkunci');
+    window.scrollTo({ top: 0 });
+    document.dispatchEvent(new CustomEvent('undangan:dibuka'));
+    setTimeout(() => sampul.remove(), 1400);
+  });
+</script>

@@ -1,0 +1,369 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { galeri } from '../data/undangan';
+
+// Versi besar untuk penampil layar penuh, dibuat saat build.
+const besar = await Promise.all(galeri.map((f) => getImage({ src: f.src, width: 1024, format: 'webp' })));
+---
+
+<section class="galeri bagian" id="galeri">
+  <div class="wadah">
+    <div class="kepala">
+      <p class="label muncul">Galeri</p>
+      <h2 class="judul muncul" style="--tunda:.1s">Potret <em>bahagia</em></h2>
+      <p class="sub muncul" style="--tunda:.2s">Sentuh foto untuk melihat lebih dekat</p>
+    </div>
+
+    <ul class="kisi" role="list">
+      {
+        galeri.map((f, i) => (
+          <li class:list={['sel', { besar: f.besar }]}>
+            <button
+              type="button"
+              class="sel-tombol tirai"
+              style={`--tunda:${(i % 3) * 0.12}s`}
+              data-indeks={i}
+              data-besar={besar[i].src}
+              data-alt={f.alt}
+              aria-label={`Perbesar foto: ${f.alt}`}
+            >
+              <Image
+                src={f.src}
+                alt={f.alt}
+                widths={[360, 640]}
+                sizes="(max-width: 760px) 50vw, 380px"
+                style={f.fokus ? `object-position:${f.fokus}` : undefined}
+              />
+              <span class="kaca" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+                </svg>
+              </span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <dialog class="penampil" aria-label="Penampil foto">
+    <figure>
+      <img class="penampil-foto" alt="" />
+      <figcaption>
+        <span class="penampil-alt"></span>
+        <span class="penampil-hitung"></span>
+      </figcaption>
+    </figure>
+    <button type="button" class="kendali tutup" aria-label="Tutup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
+    <button type="button" class="kendali sebelum" aria-label="Foto sebelumnya">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7" /></svg>
+    </button>
+    <button type="button" class="kendali sesudah" aria-label="Foto berikutnya">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m9 5 7 7-7 7" /></svg>
+    </button>
+  </dialog>
+</section>
+
+<style>
+  .kepala {
+    text-align: center;
+    margin-bottom: clamp(40px, 6vw, 72px);
+  }
+
+  .sub {
+    margin: 14px 0 0;
+    color: var(--redup);
+  }
+
+  .kisi {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: clamp(160px, 20vw, 250px);
+    grid-auto-flow: dense;
+    gap: clamp(8px, 1.4vw, 18px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sel.besar {
+    grid-row: span 2;
+  }
+
+  .sel-tombol {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 3px;
+    background: var(--kertas);
+    cursor: zoom-in;
+  }
+
+  .sel-tombol :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sel-tombol:hover :global(img) {
+    transform: scale(1.05);
+    transition-delay: 0s;
+    transition-duration: 1.2s;
+  }
+
+  .kaca {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.85);
+    color: var(--tinta);
+    opacity: 0;
+    transform: scale(0.8);
+    transition:
+      opacity 0.4s,
+      transform 0.4s var(--mulus);
+  }
+
+  .kaca svg {
+    width: 18px;
+  }
+
+  .sel-tombol:hover .kaca,
+  .sel-tombol:focus-visible .kaca {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Penampil layar penuh */
+  .penampil {
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgb(253 251 247 / 0.97);
+    color: var(--tinta);
+    overscroll-behavior: contain;
+  }
+
+  .penampil[open] {
+    display: grid;
+    place-items: center;
+    animation: pudar 0.4s var(--mulus);
+  }
+
+  .penampil::backdrop {
+    background: transparent;
+  }
+
+  .penampil figure {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    margin: 0;
+    padding: 64px 72px 24px;
+    touch-action: pan-y;
+  }
+
+  .penampil-foto {
+    max-width: min(92vw, 1024px);
+    max-height: calc(100dvh - 150px);
+    width: auto;
+    height: auto;
+    box-shadow: 0 30px 80px -30px rgb(60 45 25 / 0.4);
+    transition:
+      opacity 0.35s var(--mulus),
+      transform 0.35s var(--mulus);
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .penampil-foto.ganti {
+    opacity: 0;
+    transform: translateX(calc(var(--arah, 1) * 30px)) scale(0.98);
+  }
+
+  figcaption {
+    display: flex;
+    gap: 18px;
+    font-family: var(--serif);
+    font-size: 18px;
+    font-style: italic;
+    color: var(--redup);
+    text-align: center;
+  }
+
+  .penampil-hitung {
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--emas);
+    align-self: center;
+  }
+
+  .kendali {
+    position: fixed;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--garis);
+    border-radius: 50%;
+    background: var(--putih);
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .kendali:hover {
+    background: var(--tinta);
+    color: var(--putih);
+  }
+
+  .kendali svg {
+    width: 20px;
+  }
+
+  .tutup {
+    top: 16px;
+    right: 16px;
+  }
+
+  .sebelum,
+  .sesudah {
+    top: 50%;
+    margin-top: -24px;
+  }
+
+  .sebelum {
+    left: 16px;
+  }
+
+  .sesudah {
+    right: 16px;
+  }
+
+  @keyframes pudar {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .kisi {
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: 42vw;
+    }
+
+    .kaca {
+      display: none;
+    }
+
+    .penampil figure {
+      padding: 64px 12px 90px;
+    }
+
+    .sebelum,
+    .sesudah {
+      top: auto;
+      bottom: 20px;
+      margin-top: 0;
+    }
+
+    .sebelum {
+      left: calc(50% - 60px);
+    }
+
+    .sesudah {
+      right: calc(50% - 60px);
+    }
+
+    figcaption {
+      font-size: 16px;
+      flex-direction: column;
+      gap: 4px;
+      padding-inline: 8px;
+    }
+  }
+</style>
+
+<script>
+  const tombol = [...document.querySelectorAll<HTMLButtonElement>('.sel-tombol')];
+  const dialog = document.querySelector<HTMLDialogElement>('.penampil')!;
+  const img = dialog.querySelector<HTMLImageElement>('.penampil-foto')!;
+  const alt = dialog.querySelector<HTMLElement>('.penampil-alt')!;
+  const hitung = dialog.querySelector<HTMLElement>('.penampil-hitung')!;
+  let aktif = 0;
+
+  const tampilkan = (i: number, arah = 0) => {
+    aktif = (i + tombol.length) % tombol.length;
+    const t = tombol[aktif];
+    const pasang = () => {
+      img.src = t.dataset.besar!;
+      img.alt = t.dataset.alt!;
+      alt.textContent = t.dataset.alt!;
+      hitung.textContent = `${aktif + 1} / ${tombol.length}`;
+      img.classList.remove('ganti');
+    };
+    if (!arah) return pasang();
+    img.style.setProperty('--arah', String(-arah));
+    img.classList.add('ganti');
+    setTimeout(() => {
+      img.style.setProperty('--arah', String(arah));
+      pasang();
+    }, 220);
+    // Muat foto di sebelahnya lebih dulu supaya pergantian terasa instan.
+    new Image().src = tombol[(aktif + arah + tombol.length) % tombol.length].dataset.besar!;
+  };
+
+  tombol.forEach((t, i) =>
+    t.addEventListener('click', () => {
+      tampilkan(i);
+      dialog.showModal();
+      document.body.classList.add('terkunci');
+    }),
+  );
+
+  dialog.addEventListener('close', () => {
+    document.body.classList.remove('terkunci');
+    tombol[aktif].focus({ preventScroll: true });
+  });
+  dialog.querySelector('.tutup')!.addEventListener('click', () => dialog.close());
+  dialog.querySelector('.sebelum')!.addEventListener('click', () => tampilkan(aktif - 1, -1));
+  dialog.querySelector('.sesudah')!.addEventListener('click', () => tampilkan(aktif + 1, 1));
+
+  // Klik di area kosong menutup penampil.
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog || (e.target as HTMLElement).tagName === 'FIGURE') dialog.close();
+  });
+
+  dialog.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') tampilkan(aktif - 1, -1);
+    if (e.key === 'ArrowRight') tampilkan(aktif + 1, 1);
+  });
+
+  // Usap ke kiri/kanan di layar sentuh.
+  let awalX = 0;
+  let awalY = 0;
+  dialog.addEventListener('touchstart', (e) => {
+    awalX = e.touches[0].clientX;
+    awalY = e.touches[0].clientY;
+  }, { passive: true });
+  dialog.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - awalX;
+    const dy = e.changedTouches[0].clientY - awalY;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) tampilkan(aktif + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+  });
+</script>

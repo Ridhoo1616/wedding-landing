@@ -1,0 +1,159 @@
+---
+import { alamatKado, hadiah } from '../data/undangan';
+---
+
+<section class="hadiah bagian" id="hadiah">
+  <div class="wadah">
+    <div class="kepala">
+      <p class="label muncul">Tanda kasih</p>
+      <h2 class="judul muncul" style="--tunda:.1s">Amplop <em>digital</em></h2>
+      <p class="sub muncul" style="--tunda:.2s">
+        Doa restu Anda sudah lebih dari cukup. Bila ingin memberi tanda kasih, kami menyediakan cara berikut.
+      </p>
+    </div>
+
+    <div class="kartu-kartu">
+      {
+        hadiah.map((h, i) => (
+          <div class="kartu muncul" style={`--tunda:${0.1 * i}s`}>
+            <p class="bank">{h.bank}</p>
+            <p class="nomor">{h.nomor.replace(/(\d{4})(?=\d)/g, '$1 ')}</p>
+            <p class="atas-nama">a.n. {h.nama}</p>
+            <button type="button" class="salin" data-salin={h.nomor}>
+              Salin nomor
+            </button>
+          </div>
+        ))
+      }
+      <div class="kartu muncul" style={`--tunda:${0.1 * hadiah.length}s`}>
+        <p class="bank">Kirim kado</p>
+        <p class="alamat">{alamatKado}</p>
+        <button type="button" class="salin" data-salin={alamatKado}>
+          Salin alamat
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hadiah {
+    background: var(--kertas);
+  }
+
+  .kepala {
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto 56px;
+  }
+
+  .sub {
+    color: var(--redup);
+    margin: 14px 0 0;
+  }
+
+  .kartu-kartu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 20px;
+    max-width: 960px;
+    margin-inline: auto;
+  }
+
+  .kartu {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 28px 28px;
+    background: linear-gradient(145deg, #fff 0%, #fbf7f0 100%);
+    border: 1px solid var(--garis);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .kartu::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 1px solid var(--emas-muda);
+    opacity: 0.6;
+  }
+
+  .bank {
+    margin: 0 0 22px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--emas);
+  }
+
+  .nomor {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 30px;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .atas-nama,
+  .alamat {
+    margin: 4px 0 24px;
+    color: var(--redup);
+  }
+
+  .alamat {
+    margin-top: 0;
+    color: var(--tinta);
+    font-family: var(--serif);
+    font-size: 20px;
+    line-height: 1.4;
+  }
+
+  .salin {
+    margin-top: auto;
+    align-self: flex-start;
+    padding: 8px 18px;
+    border: 1px solid var(--garis);
+    border-radius: 999px;
+    background: #fff;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s var(--mulus);
+  }
+
+  .salin:hover {
+    border-color: var(--tinta);
+  }
+
+  .salin.berhasil {
+    background: var(--tinta);
+    border-color: var(--tinta);
+    color: var(--putih);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-salin]').forEach((b) => {
+    const asli = b.textContent!.trim();
+    b.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(b.dataset.salin!);
+        b.textContent = 'Tersalin ✓';
+      } catch {
+        b.textContent = b.dataset.salin!;
+      }
+      b.classList.add('berhasil');
+      setTimeout(() => {
+        b.textContent = asli;
+        b.classList.remove('berhasil');
+      }, 2000);
+    });
+  });
+</script>

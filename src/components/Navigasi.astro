@@ -1,0 +1,107 @@
+---
+const menu = [
+  ['#beranda', 'Beranda', 'M4 11 12 4l8 7v9h-5v-6H9v6H4v-9Z'],
+  ['#mempelai', 'Mempelai', 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z'],
+  ['#acara', 'Acara', 'M4 6h16v14H4zM4 10h16M9 3v4M15 3v4'],
+  ['#galeri', 'Galeri', 'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4'],
+  ['#ucapan', 'Ucapan', 'M5 5h14v10H9l-4 4V5Z'],
+];
+---
+
+<nav class="navigasi" aria-label="Bagian undangan">
+  {
+    menu.map(([href, label, d]) => (
+      <a href={href} data-ke={href.slice(1)}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+          <path d={d} stroke-linejoin="round" />
+        </svg>
+        <span>{label}</span>
+      </a>
+    ))
+  }
+</nav>
+
+<style>
+  .navigasi {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    z-index: 20;
+    display: flex;
+    gap: 2px;
+    padding: 6px;
+    background: rgb(255 255 255 / 0.82);
+    border: 1px solid var(--garis);
+    border-radius: 999px;
+    box-shadow: 0 16px 40px -20px rgb(60 45 25 / 0.35);
+    backdrop-filter: blur(12px);
+    transform: translate(-50%, 140%);
+    transition: transform 0.8s var(--mulus);
+  }
+
+  .navigasi.tampil {
+    transform: translate(-50%, 0);
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    color: var(--redup);
+    transition: all 0.4s var(--mulus);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+  }
+
+  span {
+    display: none;
+  }
+
+  a.aktif {
+    background: var(--tinta);
+    color: var(--putih);
+  }
+
+  a.aktif span {
+    display: inline;
+  }
+
+  @media (hover: hover) {
+    a:hover:not(.aktif) {
+      color: var(--tinta);
+    }
+  }
+</style>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('.navigasi')!;
+  const tautan = [...nav.querySelectorAll<HTMLAnchorElement>('a')];
+
+  // Muncul setelah undangan dibuka, lalu menandai bagian yang sedang dibaca.
+  const tampil = () => nav.classList.add('tampil');
+  if (document.getElementById('sampul')) document.addEventListener('undangan:dibuka', () => setTimeout(tampil, 900));
+  else tampil();
+
+  const amati = new IntersectionObserver(
+    (entri) => {
+      for (const e of entri) {
+        if (!e.isIntersecting) continue;
+        tautan.forEach((a) => a.classList.toggle('aktif', a.dataset.ke === e.target.id));
+      }
+    },
+    { rootMargin: '-45% 0px -50% 0px' },
+  );
+  tautan.forEach((a) => {
+    const sasaran = document.getElementById(a.dataset.ke!);
+    if (sasaran) amati.observe(sasaran);
+  });
+</script>

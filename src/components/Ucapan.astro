@@ -1,0 +1,274 @@
+---
+import { mempelai, whatsapp } from '../data/undangan';
+---
+
+<!--
+  Situs statis tidak punya server, jadi konfirmasi dikirim lewat WhatsApp ke nomor
+  di data/undangan.ts. Ucapan juga disimpan di peramban tamu agar tampil kembali.
+-->
+<section class="ucapan bagian" id="ucapan">
+  <div class="wadah sempit">
+    <div class="kepala">
+      <p class="label muncul">Konfirmasi kehadiran</p>
+      <h2 class="judul muncul" style="--tunda:.1s">Doa &amp; <em>ucapan</em></h2>
+      <p class="sub muncul" style="--tunda:.2s">
+        Kehadiran dan doa restu Anda adalah hadiah terindah bagi kami.
+      </p>
+    </div>
+
+    <form class="formulir muncul" data-wa={whatsapp} data-pasangan={`${mempelai.wanita.panggilan} & ${mempelai.pria.panggilan}`}>
+      <label class="isian">
+        <span>Nama</span>
+        <input name="nama" required maxlength="60" autocomplete="name" placeholder="Nama lengkap" />
+      </label>
+
+      <fieldset class="pilihan">
+        <legend>Kehadiran</legend>
+        <label><input type="radio" name="hadir" value="Hadir" required /> <span>Hadir</span></label>
+        <label><input type="radio" name="hadir" value="Masih ragu" /> <span>Masih ragu</span></label>
+        <label><input type="radio" name="hadir" value="Berhalangan" /> <span>Berhalangan</span></label>
+      </fieldset>
+
+      <label class="isian" data-jumlah>
+        <span>Jumlah tamu</span>
+        <select name="jumlah">
+          <option>1 orang</option>
+          <option>2 orang</option>
+          <option>3 orang</option>
+          <option>4 orang</option>
+        </select>
+      </label>
+
+      <label class="isian">
+        <span>Ucapan</span>
+        <textarea name="pesan" rows="4" maxlength="400" placeholder="Tuliskan doa dan ucapan untuk kedua mempelai"></textarea>
+      </label>
+
+      <button class="tombol isi" type="submit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7Z" />
+        </svg>
+        Kirim lewat WhatsApp
+      </button>
+    </form>
+
+    <ol class="daftar-ucapan" aria-live="polite"></ol>
+  </div>
+</section>
+
+<style>
+  .sempit {
+    max-width: 680px;
+  }
+
+  .kepala {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .sub {
+    color: var(--redup);
+    margin: 14px 0 0;
+  }
+
+  .formulir {
+    display: grid;
+    gap: 22px;
+    padding: clamp(24px, 5vw, 48px);
+    background: #fff;
+    border: 1px solid var(--garis);
+    border-radius: 6px;
+  }
+
+  .isian {
+    display: grid;
+    gap: 8px;
+  }
+
+  .isian > span,
+  legend {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--redup);
+  }
+
+  input:not([type='radio']),
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 0;
+    border: 0;
+    border-bottom: 1px solid var(--garis);
+    border-radius: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 16px;
+    color: var(--tinta);
+    transition: border-color 0.3s;
+    resize: vertical;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-bottom-color: var(--emas);
+  }
+
+  .pilihan {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  legend {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .pilihan label {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .pilihan input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .pilihan span {
+    display: inline-block;
+    padding: 9px 18px;
+    border: 1px solid var(--garis);
+    border-radius: 999px;
+    font-size: 14px;
+    transition: all 0.3s var(--mulus);
+  }
+
+  .pilihan input:checked + span {
+    background: var(--tinta);
+    border-color: var(--tinta);
+    color: var(--putih);
+  }
+
+  .pilihan input:focus-visible + span {
+    outline: 2px solid var(--emas);
+    outline-offset: 2px;
+  }
+
+  .formulir .tombol {
+    justify-self: start;
+  }
+
+  .daftar-ucapan {
+    display: grid;
+    gap: 14px;
+    margin: 32px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .daftar-ucapan :global(li) {
+    padding: 20px 24px;
+    border-left: 2px solid var(--emas-muda);
+    background: var(--kertas);
+    animation: masuk 0.7s var(--mulus);
+  }
+
+  .daftar-ucapan :global(strong) {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .daftar-ucapan :global(small) {
+    margin-left: 10px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--emas);
+  }
+
+  .daftar-ucapan :global(p) {
+    margin: 6px 0 0;
+    color: var(--redup);
+  }
+
+  @keyframes masuk {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+</style>
+
+<script>
+  interface Ucapan {
+    nama: string;
+    hadir: string;
+    pesan: string;
+  }
+
+  const form = document.querySelector<HTMLFormElement>('.formulir')!;
+  const daftar = document.querySelector<HTMLOListElement>('.daftar-ucapan')!;
+  const jumlah = form.querySelector<HTMLElement>('[data-jumlah]')!;
+  const KUNCI = 'undangan-ucapan';
+
+  const baca = (): Ucapan[] => {
+    try {
+      return JSON.parse(localStorage.getItem(KUNCI) || '[]');
+    } catch {
+      return [];
+    }
+  };
+
+  const tambahkan = (u: Ucapan) => {
+    const li = document.createElement('li');
+    const nama = document.createElement('strong');
+    nama.textContent = u.nama;
+    const status = document.createElement('small');
+    status.textContent = u.hadir;
+    li.append(nama, status);
+    if (u.pesan) {
+      const p = document.createElement('p');
+      p.textContent = u.pesan;
+      li.append(p);
+    }
+    daftar.prepend(li);
+  };
+
+  baca().forEach(tambahkan);
+
+  form.addEventListener('change', () => {
+    jumlah.hidden = new FormData(form).get('hadir') === 'Berhalangan';
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const d = new FormData(form);
+    const u: Ucapan = {
+      nama: String(d.get('nama')).trim(),
+      hadir: String(d.get('hadir')),
+      pesan: String(d.get('pesan') || '').trim(),
+    };
+    const baris = [
+      `Halo ${form.dataset.pasangan}, saya *${u.nama}*.`,
+      `Kehadiran: ${u.hadir}${u.hadir === 'Berhalangan' ? '' : ` (${d.get('jumlah')})`}`,
+      u.pesan && `Ucapan: ${u.pesan}`,
+    ].filter(Boolean);
+    window.open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(baris.join('\n'))}`, '_blank', 'noopener');
+
+    tambahkan(u);
+    try {
+      localStorage.setItem(KUNCI, JSON.stringify([...baca(), u].slice(-20)));
+    } catch {
+      // Penyimpanan diblokir (mis. mode privat); ucapan tetap tampil di halaman ini.
+    }
+    form.reset();
+    jumlah.hidden = false;
+  });
+</script>

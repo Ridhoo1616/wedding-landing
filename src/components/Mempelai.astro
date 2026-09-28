@@ -1,0 +1,263 @@
+---
+import { Image } from 'astro:assets';
+import { foto, mempelai } from '../data/undangan';
+
+const { wanita, pria } = mempelai;
+---
+
+<section class="mempelai bagian" id="mempelai">
+  <div class="wadah">
+    <div class="kepala">
+      <p class="label muncul">Mempelai</p>
+      <h2 class="judul muncul" style="--tunda:.1s">Dengan penuh <em>syukur</em></h2>
+    </div>
+
+    <div class="tata">
+      <figure class="potret" data-miring>
+        <div class="potret-dalam tirai">
+          <Image
+            class="potret-a"
+            src={foto.mempelaiWanita.src}
+            alt={foto.mempelaiWanita.alt}
+            widths={[560, 1024]}
+            sizes="(max-width: 860px) 92vw, 560px"
+            style={`object-position:${foto.mempelaiWanita.fokus}`}
+          />
+          <Image
+            class="potret-b"
+            src={foto.mempelaiWanitaKedua.src}
+            alt={foto.mempelaiWanitaKedua.alt}
+            widths={[560, 683]}
+            sizes="(max-width: 860px) 92vw, 560px"
+            style={`object-position:${foto.mempelaiWanitaKedua.fokus}`}
+          />
+        </div>
+        <figcaption>
+          <button type="button" class="ganti" aria-pressed="false">
+            <span class="titik"></span><span class="titik"></span>
+            <span class="ganti-teks">Sentuh untuk melihat foto lain</span>
+          </button>
+        </figcaption>
+      </figure>
+
+      <div class="profil">
+        <div class="orang muncul">
+          <p class="skrip nama">{wanita.panggilan}</p>
+          <h3>{wanita.lengkap}</h3>
+          <p class="ortu">{wanita.ortu}</p>
+          <a class="ig" href={`https://instagram.com/${wanita.instagram}`} target="_blank" rel="noopener">
+            @{wanita.instagram}
+          </a>
+        </div>
+
+        <div class="dan muncul" aria-hidden="true">&amp;</div>
+
+        <div class="orang kecil muncul">
+          <p class="skrip nama">{pria.panggilan}</p>
+          <h3>{pria.lengkap}</h3>
+          <p class="ortu">{pria.ortu}</p>
+          <a class="ig" href={`https://instagram.com/${pria.instagram}`} target="_blank" rel="noopener">
+            @{pria.instagram}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .kepala {
+    text-align: center;
+    margin-bottom: clamp(48px, 7vw, 90px);
+  }
+
+  .tata {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    align-items: center;
+    gap: clamp(40px, 7vw, 100px);
+  }
+
+  .potret {
+    margin: 0;
+    perspective: 1200px;
+  }
+
+  .potret-dalam {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 280px 280px 4px 4px;
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transform-style: preserve-3d;
+    transition:
+      clip-path 1.4s var(--mulus),
+      transform 0.6s var(--mulus);
+    box-shadow: 0 40px 80px -40px rgb(60 45 25 / 0.4);
+    cursor: pointer;
+  }
+
+  .potret-dalam :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .potret-dalam :global(.potret-b) {
+    opacity: 0;
+    transition:
+      opacity 0.9s var(--mulus),
+      transform 2.2s var(--mulus);
+  }
+
+  .potret.kedua .potret-dalam :global(.potret-b) {
+    opacity: 1;
+  }
+
+  /* Kilau cahaya yang mengikuti kursor. */
+  .potret-dalam::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: radial-gradient(
+      circle at var(--kx, 50%) var(--ky, 30%),
+      rgb(255 255 255 / 0.35),
+      transparent 45%
+    );
+    opacity: var(--kilau, 0);
+    transition: opacity 0.5s;
+    pointer-events: none;
+  }
+
+  figcaption {
+    display: flex;
+    justify-content: center;
+    margin-top: 22px;
+  }
+
+  .ganti {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 4px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--redup);
+  }
+
+  .titik {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1px solid var(--emas);
+    transition: background 0.3s;
+  }
+
+  .ganti .titik:first-child,
+  .potret.kedua .titik:nth-child(2) {
+    background: var(--emas);
+  }
+
+  .potret.kedua .titik:first-child {
+    background: none;
+  }
+
+  .ganti-teks {
+    margin-left: 6px;
+  }
+
+  .profil {
+    text-align: center;
+  }
+
+  .nama {
+    font-size: clamp(60px, 7vw, 96px);
+    margin: 0 0 4px;
+    color: var(--tinta);
+  }
+
+  h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 26px;
+    margin: 0 0 8px;
+  }
+
+  .ortu {
+    color: var(--redup);
+    margin: 0 0 14px;
+  }
+
+  .ig {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    color: var(--emas);
+    text-decoration: none;
+    border-bottom: 1px solid var(--emas-muda);
+  }
+
+  .kecil .nama {
+    font-size: clamp(44px, 5vw, 64px);
+  }
+
+  .kecil h3 {
+    font-size: 21px;
+  }
+
+  .dan {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 48px;
+    color: var(--emas);
+    margin: 28px 0;
+  }
+
+  @media (max-width: 860px) {
+    .tata {
+      grid-template-columns: 1fr;
+    }
+
+    .potret-dalam {
+      border-radius: 200px 200px 4px 4px;
+    }
+  }
+</style>
+
+<script>
+  const redam = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-miring]').forEach((potret) => {
+    const dalam = potret.querySelector<HTMLElement>('.potret-dalam')!;
+    const tombol = potret.querySelector<HTMLButtonElement>('.ganti')!;
+
+    const ganti = () => {
+      const kedua = potret.classList.toggle('kedua');
+      tombol.setAttribute('aria-pressed', String(kedua));
+    };
+    dalam.addEventListener('click', ganti);
+    tombol.addEventListener('click', ganti);
+
+    if (redam || !matchMedia('(hover: hover)').matches) return;
+
+    // Foto sedikit memiring mengikuti kursor, seperti kartu yang dipegang.
+    dalam.addEventListener('pointermove', (e) => {
+      const r = dalam.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      dalam.style.setProperty('--ry', `${(x - 0.5) * 8}deg`);
+      dalam.style.setProperty('--rx', `${(0.5 - y) * 8}deg`);
+      dalam.style.setProperty('--kx', `${x * 100}%`);
+      dalam.style.setProperty('--ky', `${y * 100}%`);
+      dalam.style.setProperty('--kilau', '1');
+    });
+    dalam.addEventListener('pointerleave', () => {
+      for (const p of ['--rx', '--ry']) dalam.style.setProperty(p, '0deg');
+      dalam.style.setProperty('--kilau', '0');
+    });
+  });
+</script>

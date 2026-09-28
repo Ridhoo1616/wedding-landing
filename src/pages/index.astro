@@ -1,0 +1,39 @@
+---
+import Dasar from '../layouts/Dasar.astro';
+import Sampul from '../components/Sampul.astro';
+import Pembuka from '../components/Pembuka.astro';
+import Kutipan from '../components/Kutipan.astro';
+import Mempelai from '../components/Mempelai.astro';
+import HitungMundur from '../components/HitungMundur.astro';
+import Sorotan from '../components/Sorotan.astro';
+import Acara from '../components/Acara.astro';
+import Galeri from '../components/Galeri.astro';
+import Ucapan from '../components/Ucapan.astro';
+import Hadiah from '../components/Hadiah.astro';
+import Penutup from '../components/Penutup.astro';
+import Navigasi from '../components/Navigasi.astro';
+import { mempelai } from '../data/undangan';
+
+const pasangan = `${mempelai.wanita.panggilan} & ${mempelai.pria.panggilan}`;
+---
+
+<Dasar judul={`Pernikahan ${pasangan}`} deskripsi={`Undangan pernikahan ${pasangan}. Mohon doa restu dan kehadiran Anda.`}>
+  <Sampul />
+  <main>
+    <Pembuka />
+    <Kutipan />
+    <Mempelai />
+    <HitungMundur />
+    <Sorotan />
+    <Acara />
+    <Galeri />
+    <Ucapan />
+    <Hadiah />
+  </main>
+  <Penutup />
+  <Navigasi />
+</Dasar>
+
+<script>
+  import '../scripts/gerak.ts';
+</script>

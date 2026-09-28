@@ -1,0 +1,238 @@
+---
+import { Image } from 'astro:assets';
+import { sorotan } from '../data/undangan';
+---
+
+<!--
+  Di layar lebar bagian ini "menempel" dan foto bergeser mendatar mengikuti gulir.
+  Di ponsel berubah menjadi deretan yang bisa diusap ke samping.
+-->
+<section class="sorotan" id="sorotan" data-sorotan>
+  <div class="lekat">
+    <div class="kepala wadah">
+      <div>
+        <p class="label">Detail kecil</p>
+        <h2 class="judul">Hal-hal yang <em>ia</em> cintai</h2>
+      </div>
+      <p class="petunjuk"><span class="panah">→</span> Geser untuk menjelajah</p>
+    </div>
+
+    <div class="lintasan" data-lintasan>
+      {
+        sorotan.map((f, i) => (
+          <figure class="kartu" style={`--i:${i}`}>
+            <div class="kartu-foto">
+              <Image
+                src={f.src}
+                alt={f.alt}
+                widths={[420, 683]}
+                sizes="(max-width: 760px) 72vw, 380px"
+                style={f.fokus ? `object-position:${f.fokus}` : undefined}
+              />
+            </div>
+            <figcaption>
+              <span class="no">{String(i + 1).padStart(2, '0')}</span>
+              {f.judul}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+
+    <div class="kemajuan" aria-hidden="true"><span data-kemajuan></span></div>
+  </div>
+</section>
+
+<style>
+  .sorotan {
+    position: relative;
+    background: var(--kertas);
+  }
+
+  .lekat {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(28px, 4vw, 48px);
+    overflow: hidden;
+  }
+
+  .kepala {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+  }
+
+  .petunjuk {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--redup);
+  }
+
+  .panah {
+    display: inline-block;
+    color: var(--emas);
+    animation: geser 1.8s ease-in-out infinite;
+  }
+
+  @keyframes geser {
+    50% {
+      transform: translateX(6px);
+    }
+  }
+
+  .lintasan {
+    display: flex;
+    gap: clamp(20px, 3vw, 40px);
+    padding-inline: max(var(--tepi), calc((100vw - var(--lebar)) / 2));
+    will-change: transform;
+  }
+
+  .kartu {
+    flex: none;
+    width: clamp(220px, min(27vw, 44vh), 380px);
+    margin: 0;
+  }
+
+  .kartu:nth-child(even) {
+    margin-top: clamp(30px, 6vh, 70px);
+  }
+
+  .kartu-foto {
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: 3px;
+  }
+
+  .kartu:nth-child(3n + 1) .kartu-foto {
+    border-radius: 200px 200px 3px 3px;
+  }
+
+  .kartu-foto :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition:
+      transform 1.2s var(--mulus),
+      filter 1.2s var(--mulus);
+    filter: saturate(0.85);
+  }
+
+  .kartu:hover .kartu-foto :global(img) {
+    transform: scale(1.06);
+    filter: saturate(1);
+  }
+
+  figcaption {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 16px;
+    font-family: var(--serif);
+    font-size: 24px;
+    font-style: italic;
+  }
+
+  .no {
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--emas);
+  }
+
+  .kemajuan {
+    width: min(100% - 2 * var(--tepi), var(--lebar));
+    height: 1px;
+    margin-inline: auto;
+    background: var(--garis);
+  }
+
+  .kemajuan span {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: var(--emas);
+    transform: scaleX(var(--p, 0));
+    transform-origin: left;
+  }
+
+  /* Ponsel dan layar pendek: usap mendatar biasa, tanpa efek menempel. */
+  @media (max-width: 760px), (max-height: 560px), (prefers-reduced-motion: reduce) {
+    .sorotan {
+      height: auto !important;
+      padding-block: 90px;
+    }
+
+    .lekat {
+      position: static;
+      height: auto;
+    }
+
+    .kepala {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .lintasan {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      transform: none !important;
+      padding-bottom: 8px;
+    }
+
+    .lintasan::-webkit-scrollbar {
+      display: none;
+    }
+
+    .kartu {
+      scroll-snap-align: center;
+      width: 72vw;
+    }
+  }
+</style>
+
+<script>
+  const bagian = document.querySelector<HTMLElement>('[data-sorotan]')!;
+  const lintasan = bagian.querySelector<HTMLElement>('[data-lintasan]')!;
+  const kemajuan = bagian.querySelector<HTMLElement>('[data-kemajuan]')!;
+  const mendatar = matchMedia('(max-width: 760px), (max-height: 560px), (prefers-reduced-motion: reduce)');
+  let jarak = 0;
+
+  const ukur = () => {
+    if (mendatar.matches) {
+      bagian.style.height = '';
+      lintasan.style.transform = '';
+      return;
+    }
+    jarak = Math.max(0, lintasan.scrollWidth - innerWidth);
+    bagian.style.height = `${innerHeight + jarak}px`;
+    gerak();
+  };
+
+  const gerak = () => {
+    if (mendatar.matches) {
+      const maks = lintasan.scrollWidth - lintasan.clientWidth;
+      kemajuan.style.setProperty('--p', String(maks ? lintasan.scrollLeft / maks : 0));
+      return;
+    }
+    const atas = bagian.getBoundingClientRect().top;
+    const p = Math.min(1, Math.max(0, -atas / (jarak || 1)));
+    lintasan.style.transform = `translate3d(${-p * jarak}px,0,0)`;
+    kemajuan.style.setProperty('--p', String(p));
+  };
+
+  addEventListener('scroll', gerak, { passive: true });
+  lintasan.addEventListener('scroll', gerak, { passive: true });
+  addEventListener('resize', ukur);
+  mendatar.addEventListener('change', ukur);
+  addEventListener('load', ukur);
+  ukur();
+</script>
